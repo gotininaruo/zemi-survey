@@ -4,16 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>時給アンケート</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .question {
-            margin-bottom: 15px;
-        }
-    </style>
     <script>
+        const results = [];
+
         function getRandomX() {
             const values = [1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600];
             return values[Math.floor(Math.random() * values.length)];
@@ -24,37 +17,67 @@
             return values[Math.floor(Math.random() * values.length)];
         }
 
-        function loadSurvey() {
+        function updateSurvey() {
             const surveyContainer = document.getElementById('surveyContainer');
-            surveyContainer.innerHTML = '';  // コンテナをリセット
+            surveyContainer.innerHTML = ''; // 前の内容をクリア
+            results.length = 0; // 結果をリセット
 
-            // 6問のアンケートを生成
             for (let i = 0; i < 6; i++) {
-                const xValue = getRandomX();  // ランダムな時給
-                const yValue = getRandomY();  // ランダムな確率
+                const xValue = getRandomX();
+                const yValue = getRandomY();
+                results.push({ x: xValue, y: yValue, answer: null }); // 結果を格納
 
                 const question = document.createElement('div');
-                question.classList.add('question'); // スタイル用のクラス追加
                 question.innerHTML = `
-                    <p>時給${xValue}円でシフトに入れる確率が${yValue}%の場合に働きたいですか？</p>
+                    <p>時給${xValue}円でシフトに入れる確率が${yValue}％の場合に働きたいですか？</p>
                     <label>
-                        <input type="radio" name="answer${i}" value="はい"> はい
+                        <input type="radio" name="answer${i}" value="はい" onchange="saveAnswer(${i}, '${xValue}', '${yValue}')"> はい
                     </label>
                     <label>
-                        <input type="radio" name="answer${i}" value="いいえ"> いいえ
+                        <input type="radio" name="answer${i}" value="いいえ" onchange="saveAnswer(${i}, '${xValue}', '${yValue}')"> いいえ
                     </label>
                 `;
-                surveyContainer.appendChild(question); // 質問を追加
+                surveyContainer.appendChild(question);
             }
         }
 
-        // ページが読み込まれたらアンケートを表示
-        window.onload = loadSurvey;
+        function saveAnswer(index, xValue, yValue) {
+            const answer = document.querySelector(`input[name="answer${index}"]:checked`);
+            if (answer) {
+                results[index].answer = answer.value; // 回答を保存
+            }
+        }
+
+        function submitSurvey() {
+            const resultsContainer = document.getElementById('resultsContainer');
+            resultsContainer.innerHTML = '<h2>送信完了</h2><p>回答ありがとうございました。</p>';
+            
+            // 管理者が結果を確認するための出力（開発者ツールで確認）
+            const summary = {};
+            results.forEach(result => {
+                const key = `時給${result.x}円 (${result.y}%)`;
+                if (!summary[key]) {
+                    summary[key] = { yes: 0, no: 0 };
+                }
+                if (result.answer === 'はい') {
+                    summary[key].yes++;
+                } else {
+                    summary[key].no++;
+                }
+            });
+
+            // 結果をコンソールに出力
+            console.log('アンケート結果:', summary);
+        }
+
+        window.onload = updateSurvey; // ページ読み込み時に更新
     </script>
 </head>
 <body>
     <h1>時給アンケート</h1>
     <div id="surveyContainer"></div>
-    <button onclick="loadSurvey()">再生成</button> <!-- 質問を再生成するボタン -->
+    <button onclick="updateSurvey()">再生成</button>
+    <button onclick="submitSurvey()">送信</button>
+    <div id="resultsContainer"></div>
 </body>
 </html>

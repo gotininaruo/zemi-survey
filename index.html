@@ -12,47 +12,20 @@ function submitSurvey() {
         }
     });
 
-    // GitHub APIに結果を送信
-    const githubToken = 'YOUR_GITHUB_TOKEN'; // ここにPersonal Access Tokenを入れる
-    const repoOwner = 'YOUR_GITHUB_USERNAME'; // GitHubユーザー名
-    const repoName = 'YOUR_REPOSITORY_NAME'; // リポジトリ名
-    const filePath = 'results.json'; // 結果を保存するファイル名
-
-    // 既存のファイルを取得して内容を更新する
-    fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
-        method: 'GET',
+    // サーバーへの送信（例）
+    fetch('https://your-server.com/api/survey', {
+        method: 'POST',
         headers: {
-            'Authorization': `token ${githubToken}`,
-            'Accept': 'application/vnd.github.v3.raw'
-        }
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ results })
     })
     .then(response => response.json())
     .then(data => {
-        const existingData = data ? JSON.parse(atob(data.content)) : {}; // 既存のデータをデコード
-
-        // 新しい結果を既存データにマージ
-        const updatedData = { ...existingData, ...summary };
-
-        // GitHubに新しい内容をアップロード
-        return fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `token ${githubToken}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                message: 'Update survey results',
-                content: btoa(JSON.stringify(updatedData, null, 2)), // 内容をエンコード
-                sha: data.sha // 既存のファイルのSHAを指定
-            })
-        });
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('GitHubに結果が保存されました:', data);
+        console.log('Success:', data);
         document.getElementById('resultsContainer').innerHTML = '<h2>送信完了</h2><p>回答ありがとうございました。</p>';
     })
     .catch((error) => {
-        console.error('エラーが発生しました:', error);
+        console.error('Error:', error);
     });
 }

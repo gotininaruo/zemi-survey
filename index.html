@@ -1,96 +1,58 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>時給アンケート</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+function submitSurvey() {
+    const summary = {};
+    results.forEach(result => {
+        const key = `時給${result.x}円 (${result.y}%)`;
+        if (!summary[key]) {
+            summary[key] = { yes: 0, no: 0 };
         }
-        .question {
-            margin-bottom: 15px;
+        if (result.answer === 'はい') {
+            summary[key].yes++;
+        } else if (result.answer === 'いいえ') {
+            summary[key].no++;
         }
-    </style>
-    <script>
-        const results = []; // 回答結果を格納する配列
+    });
 
-        function getRandomX() {
-            const values = [1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600];
-            return values[Math.floor(Math.random() * values.length)];
+    // GitHub APIに結果を送信
+    const githubToken = 'YOUR_GITHUB_TOKEN'; // ここにPersonal Access Tokenを入れる
+    const repoOwner = 'YOUR_GITHUB_USERNAME'; // GitHubユーザー名
+    const repoName = 'YOUR_REPOSITORY_NAME'; // リポジトリ名
+    const filePath = 'results.json'; // 結果を保存するファイル名
+
+    // 既存のファイルを取得して内容を更新する
+    fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3.raw'
         }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const existingData = data ? JSON.parse(atob(data.content)) : {}; // 既存のデータをデコード
 
-        function getRandomY() {
-            const values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-            return values[Math.floor(Math.random() * values.length)];
-        }
+        // 新しい結果を既存データにマージ
+        const updatedData = { ...existingData, ...summary };
 
-        function loadSurvey() {
-            const surveyContainer = document.getElementById('surveyContainer');
-            surveyContainer.innerHTML = '';  // コンテナをリセット
-            results.length = 0; // 結果をリセット
-
-            // 6問のアンケートを生成
-            for (let i = 0; i < 6; i++) {
-                const xValue = getRandomX();  // ランダムな時給
-                const yValue = getRandomY();  // ランダムな確率
-
-                results.push({ x: xValue, y: yValue, answer: null }); // 回答結果の初期化
-
-                const question = document.createElement('div');
-                question.classList.add('question'); // スタイル用のクラス追加
-                question.innerHTML = `
-                    <p>時給${xValue}円でシフトに入れる確率が${yValue}%の場合に働きたいですか？</p>
-                    <label>
-                        <input type="radio" name="answer${i}" value="はい" onchange="saveAnswer(${i}, '${xValue}', '${yValue}')"> はい
-                    </label>
-                    <label>
-                        <input type="radio" name="answer${i}" value="いいえ" onchange="saveAnswer(${i}, '${xValue}', '${yValue}')"> いいえ
-                    </label>
-                `;
-                surveyContainer.appendChild(question); // 質問を追加
-            }
-        }
-
-        function saveAnswer(index, xValue, yValue) {
-            const answer = document.querySelector(`input[name="answer${index}"]:checked`);
-            if (answer) {
-                results[index].answer = answer.value; // 回答を保存
-            }
-        }
-
-        function submitSurvey() {
-            // 結果を表示するためのコンソール出力
-            const summary = {};
-            results.forEach(result => {
-                const key = `時給${result.x}円 (${result.y}%)`;
-                if (!summary[key]) {
-                    summary[key] = { yes: 0, no: 0 };
-                }
-                if (result.answer === 'はい') {
-                    summary[key].yes++;
-                } else if (result.answer === 'いいえ') {
-                    summary[key].no++;
-                }
-            });
-
-            // 結果をコンソールに出力
-            console.log('アンケート結果:', summary);
-
-            // 結果表示エリアを更新
-            const resultsContainer = document.getElementById('resultsContainer');
-            resultsContainer.innerHTML = '<h2>送信完了</h2><p>回答ありがとうございました。</p>';
-        }
-
-        // ページが読み込まれたらアンケートを表示
-        window.onload = loadSurvey;
-    </script>
-</head>
-<body>
-    <h1>時給アンケート</h1>
-    <div id="surveyContainer"></div>
-    <button onclick="submitSurvey()">送信</button> <!-- 送信ボタン -->
-    <div id="resultsContainer"></div>
-</body>
-</html>
+        // GitHubに新しい内容をアップロード
+        return fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${githubToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: 'Update survey results',
+                content: btoa(JSON.stringify(updatedData, null, 2)), // 内容をエンコード
+                sha: data.sha // 既存のファイルのSHAを指定
+            })
+        });
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('GitHubに結果が保存されました:', data);
+        document.getElementById('resultsContainer').innerHTML = '<h2>送信完了</h2><p>回答ありがとうございました。</p>';
+    })
+    .catch((error) => {
+        console.error('エラーが発生しました:', error);
+    });
+}

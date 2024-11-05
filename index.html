@@ -61,6 +61,13 @@
         }
 
         function submitSurvey() {
+            // 未回答の質問があるかチェック
+            const allAnswered = results.every(result => result.answer !== null);
+            if (!allAnswered) {
+                alert("すべての質問に回答してください。");
+                return; // 未回答があれば送信しない
+            }
+
             // 結果を表示するためのコンソール出力
             const summary = {};
             results.forEach(result => {

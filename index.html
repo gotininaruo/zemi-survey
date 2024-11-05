@@ -31,8 +31,27 @@
             surveyContainer.innerHTML = '';  // コンテナをリセット
             results.length = 0; // 結果をリセット
 
-            // 6問のアンケートを生成
-            for (let i = 0; i < 6; i++) {
+            // 最初に4問の「時給X円の場合、働きたいですか？」の質問を生成
+            for (let i = 0; i < 4; i++) {
+                const xValue = getRandomX();  // ランダムな時給
+                results.push({ x: xValue, y: null, answer: null }); // 回答結果の初期化
+
+                const question = document.createElement('div');
+                question.classList.add('question'); // スタイル用のクラス追加
+                question.innerHTML = `
+                    <p>時給${xValue}円の場合、働きたいですか？</p>
+                    <label>
+                        <input type="radio" name="answer${i}" value="はい" onchange="saveAnswer(${i}, '${xValue}', null)"> はい
+                    </label>
+                    <label>
+                        <input type="radio" name="answer${i}" value="いいえ" onchange="saveAnswer(${i}, '${xValue}', null)"> いいえ
+                    </label>
+                `;
+                surveyContainer.appendChild(question); // 質問を追加
+            }
+
+            // 続けて6問の「時給X円でシフトに入れる確率がY%の場合に働きたいですか？」の質問を生成
+            for (let i = 4; i < 10; i++) {
                 const xValue = getRandomX();  // ランダムな時給
                 const yValue = getRandomY();  // ランダムな確率
 
@@ -71,7 +90,7 @@
             // 結果を表示するためのコンソール出力
             const summary = {};
             results.forEach(result => {
-                const key = `時給${result.x}円 (${result.y}%)`;
+                const key = result.y !== null ? `時給${result.x}円 (${result.y}%)` : `時給${result.x}円`;
                 if (!summary[key]) {
                     summary[key] = { yes: 0, no: 0 };
                 }

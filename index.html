@@ -60,23 +60,32 @@
             }
         }
 
-        function submitSurvey() {
-            // 結果を表示するためのコンソール出力
-            const summary = {};
-            results.forEach(result => {
-                const key = `時給${result.x}円 (${result.y}%)`;
-                if (!summary[key]) {
-                    summary[key] = { yes: 0, no: 0 };
-                }
-                if (result.answer === 'はい') {
-                    summary[key].yes++;
-                } else if (result.answer === 'いいえ') {
-                    summary[key].no++;
-                }
+        async function submitSurvey() {
+            // 結果データの準備
+            const data = results.map(result => [result.x, result.y, result.answer]);
+
+            // Google Sheets API エンドポイント
+            const spreadsheetId = 'YOUR_SPREADSHEET_ID'; // Google Sheets IDを設定
+            const apiKey = 'YOUR_API_KEY'; // APIキーを設定
+            const range = 'Sheet1!A1:C6'; // データを挿入する範囲
+
+            const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?valueInputOption=RAW&key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    range: range,
+                    majorDimension: "ROWS",
+                    values: data
+                })
             });
 
-            // 結果をコンソールに出力
-            console.log('アンケート結果:', summary);
+            if (response.ok) {
+                alert("回答が送信されました。ありがとうございました！");
+            } else {
+                console.error("送信に失敗しました:", response.statusText);
+            }
 
             // 結果表示エリアを更新
             const resultsContainer = document.getElementById('resultsContainer');

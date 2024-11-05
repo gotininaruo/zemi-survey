@@ -61,13 +61,13 @@
         }
 
         async function submitSurvey() {
-            // 結果データの準備
+            // 回答データを作成
             const data = results.map(result => [result.x, result.y, result.answer]);
 
-            // Google Sheets API エンドポイント
-            const spreadsheetId = 'YOUR_SPREADSHEET_ID'; // Google Sheets IDを設定
-            const apiKey = 'YOUR_API_KEY'; // APIキーを設定
-            const range = 'Sheet1!A1:C6'; // データを挿入する範囲
+            // Google Sheets APIエンドポイント
+            const spreadsheetId = '1YjlQZ3P7ou4vWWaLqskiQ4mbNeEiH_iYlqeGoTZLbW0';
+            const apiKey = 'AIzaSyC5POzZyPLwikcYELHN26TDD6d8knCuAQo'; // あなたのAPIキーに置き換えてください
+            const range = 'Sheet1!A1:C6'; // データを追加する範囲
 
             const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}:append?valueInputOption=RAW&key=${apiKey}`, {
                 method: 'POST',

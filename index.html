@@ -14,7 +14,7 @@
         }
     </style>
     <script>
-        const results = []; // 回答結果を格納する配列
+        const results = [];
 
         function getRandomX() {
             const values = [1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600];
@@ -28,16 +28,15 @@
 
         function loadSurvey() {
             const surveyContainer = document.getElementById('surveyContainer');
-            surveyContainer.innerHTML = '';  // コンテナをリセット
-            results.length = 0; // 結果をリセット
+            surveyContainer.innerHTML = '';
+            results.length = 0;
 
-            // 最初に4問の「時給X円の場合、働きたいですか？」の質問を生成
             for (let i = 0; i < 4; i++) {
-                const xValue = getRandomX();  // ランダムな時給
-                results.push({ x: xValue, y: null, answer: null }); // 回答結果の初期化
+                const xValue = getRandomX();
+                results.push({ x: xValue, y: null, answer: null });
 
                 const question = document.createElement('div');
-                question.classList.add('question'); // スタイル用のクラス追加
+                question.classList.add('question');
                 question.innerHTML = `
                     <p>時給${xValue}円の場合、働きたいですか？</p>
                     <label>
@@ -47,18 +46,17 @@
                         <input type="radio" name="answer${i}" value="いいえ" onchange="saveAnswer(${i}, '${xValue}', null)"> いいえ
                     </label>
                 `;
-                surveyContainer.appendChild(question); // 質問を追加
+                surveyContainer.appendChild(question);
             }
 
-            // 続けて6問の「時給X円でシフトに入れる確率がY%の場合に働きたいですか？」の質問を生成
             for (let i = 4; i < 10; i++) {
-                const xValue = getRandomX();  // ランダムな時給
-                const yValue = getRandomY();  // ランダムな確率
+                const xValue = getRandomX();
+                const yValue = getRandomY();
 
-                results.push({ x: xValue, y: yValue, answer: null }); // 回答結果の初期化
+                results.push({ x: xValue, y: yValue, answer: null });
 
                 const question = document.createElement('div');
-                question.classList.add('question'); // スタイル用のクラス追加
+                question.classList.add('question');
                 question.innerHTML = `
                     <p>時給${xValue}円でシフトに入れる確率が${yValue}%の場合に働きたいですか？</p>
                     <label>
@@ -68,48 +66,50 @@
                         <input type="radio" name="answer${i}" value="いいえ" onchange="saveAnswer(${i}, '${xValue}', '${yValue}')"> いいえ
                     </label>
                 `;
-                surveyContainer.appendChild(question); // 質問を追加
+                surveyContainer.appendChild(question);
             }
         }
 
         function saveAnswer(index, xValue, yValue) {
             const answer = document.querySelector(`input[name="answer${index}"]:checked`);
             if (answer) {
-                results[index].answer = answer.value; // 回答を保存
+                results[index].answer = answer.value;
             }
         }
 
-        function submitSurvey() {
-            // 未回答の質問があるかチェック
+        async function submitSurvey() {
             const allAnswered = results.every(result => result.answer !== null);
             if (!allAnswered) {
                 alert("すべての質問に回答してください。");
-                return; // 未回答があれば送信しない
+                return;
             }
 
-            // 結果を表示するためのコンソール出力
-            const summary = {};
-            results.forEach(result => {
-                const key = result.y !== null ? `時給${result.x}円 (${result.y}%)` : `時給${result.x}円`;
-                if (!summary[key]) {
-                    summary[key] = { yes: 0, no: 0 };
-                }
-                if (result.answer === 'はい') {
-                    summary[key].yes++;
-                } else if (result.answer === 'いいえ') {
-                    summary[key].no++;
-                }
-            });
+            const surveyData = results.map(result => ({
+                x: result.x,
+                y: result.y,
+                answer: result.answer
+            }));
 
-            // 結果をコンソールに出力
-            console.log('アンケート結果:', summary);
+            try {
+                const response = await fetch('YOUR_SCRIPT_URL', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: surveyData })
+                });
 
-            // 結果表示エリアを更新
-            const resultsContainer = document.getElementById('resultsContainer');
-            resultsContainer.innerHTML = '<h2>送信完了</h2><p>回答ありがとうございました。</p>';
+                if (response.ok) {
+                    console.log('アンケート結果がスプレッドシートに送信されました。');
+                    document.getElementById('resultsContainer').innerHTML = '<h2>送信完了</h2><p>回答ありがとうございました。</p>';
+                } else {
+                    console.error('送信エラー:', response.statusText);
+                    alert("送信中にエラーが発生しました。");
+                }
+            } catch (error) {
+                console.error('送信エラー:', error);
+                alert("送信中にエラーが発生しました。");
+            }
         }
 
-        // ページが読み込まれたらアンケートを表示
         window.onload = loadSurvey;
     </script>
 </head>
@@ -117,7 +117,7 @@
     <h1>時給アンケート</h1>
     <p>希望したシフト回数が10回の場合で、シフトに入れる確率が50%の時は、シフトに5回入れるということを意味します。</p>
     <div id="surveyContainer"></div>
-    <button onclick="submitSurvey()">送信</button> <!-- 送信ボタン -->
+    <button onclick="submitSurvey()">送信</button>
     <div id="resultsContainer"></div>
 </body>
 </html>

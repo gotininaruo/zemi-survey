@@ -77,37 +77,73 @@
             }
         }
 
-      async function submitSurvey() {
-    const allAnswered = results.every(result => result.answer !== null);
-    if (!allAnswered) {
-        alert("すべての質問に回答してください。");
-        return;
+     // アンケートデータを送信する関数
+async function sendSurveyData(url, surveyData) {
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(surveyData)
+        });
+        
+        // レスポンスのステータスを確認
+        if (!response.ok) {
+            // エラーレスポンスの Content-Type を取得
+            const contentType = response.headers.get('content-type');
+            let errorData;
+
+            if (contentType && contentType.includes('application/json')) {
+                // JSON 形式の場合
+                errorData = await response.json();
+            } else {
+                // テキスト形式の場合
+                errorData = await response.text();
+            }
+
+            // エラーデータを含むエラーをスロー
+            throw new Error(JSON.stringify({
+                status: response.status,
+                statusText: response.statusText,
+                data: errorData
+            }));
+        }
+
+        // レスポンスが正常な場合、データをパースして返す
+        const data = await response.json();
+        console.log('送信成功:', data); // 成功メッセージの表示
+        return data;
+
+    } catch (error) {
+        // エラーハンドリング
+        console.error('Fetch error:', error);
+
+        try {
+            // スローされたエラーが JSON 形式の場合、パースする
+            const errorObj = JSON.parse(error.message);
+            console.log('エラーのステータス:', errorObj.status);
+            console.log('エラーのステータステキスト:', errorObj.statusText);
+            console.log('エラーデータ:', errorObj.data);
+        } catch (e) {
+            // エラーメッセージが JSON でない場合
+            console.log('エラーメッセージ:', error.message);
+        }
     }
-
-    const surveyData = results.map(result => ({
-        x: result.x,
-        y: result.y,
-        answer: result.answer
-    }));
-
-   try {
-    // fetchリクエストを送信
-    const response = await fetch(url);
-
-    // HTTPレスポンスステータスをチェック
-    if (!response.ok) {
-      throw new Error(`サーバーからの応答が異常です: ${response.status}`);
-    }
-
-    // JSONとしてレスポンスをパース
-    const data = await response.json();
-    console.log('取得したデータ:', data);
-
-  } catch (error) {
-    // ネットワークエラーまたはデータ処理エラーの捕捉
-    console.error('エラーが発生しました:', error);
-  }
 }
+
+// アンケートデータの例
+const surveyData = {
+    questions: [
+        { question: "時給1000円で働きますか？", answer: "はい" },
+        { question: "時給1200円で働きますか？", answer: "いいえ" },
+        // ... 他の質問も含める
+    ]
+};
+
+// 使用例 - Google Apps ScriptのURLにアンケートデータを送信
+sendSurveyData('https://script.google.com/macros/s/AKfycbzOzNzNfDSPA_0TnrdOLcrT23bo5eMHtd5kmcS1qLhB2oVuVkfr1du8dPYoBkoO_gQ/exec', surveyData);
+
 
         window.onload = loadSurvey;
     </script>

@@ -77,43 +77,27 @@
             }
         }
 
-      async function submitSurvey() {
-    const allAnswered = results.every(result => result.answer !== null);
-    if (!allAnswered) {
-        alert("すべての質問に回答してください。");
-        return;
-    }
-
-    const surveyData = results.map(result => ({
-        x: result.x,
-        y: result.y,
-        answer: result.answer
-    }));
-
+     async function testFetch() {
     try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbzOzNzNfDSPA_0TnrdOLcrT23bo5eMHtd5kmcS1qLhB2oVuVkfr1du8dPYoBkoO_gQ/exec', {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbzOzNzNfDSPA_0TnrdOLcrT23bo5eMHtd5kmcS1qLhB2oVuVkfr1du8dPYoBkoO_gQ/exec', {  // ここにウェブアプリURLを貼り付け
             method: 'POST',
-            headers: { 'Content-Type': 'application/json',
-                      'Access-Control-Allow-Origin': '*', 
-                     },
-            body: JSON.stringify({ data: surveyData })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ test: "data" })
         });
-
+        
         if (response.ok) {
-            const result = await response.json();
-            console.log('送信結果:', result);
-            document.getElementById('resultsContainer').innerHTML = '<h2>送信完了</h2><p>回答ありがとうございました。</p>';
+            console.log('接続成功:', await response.json());
         } else {
-            const errorText = await response.text();
-            console.error('送信エラー:', errorText);
-            alert("送信中にエラーが発生しました。サーバーエラーメッセージ: " + errorText);
+            console.error('接続失敗:', await response.text());
         }
     } catch (error) {
-        console.error('送信エラー:', error);
-        alert("送信中にエラーが発生しました。ネットワークエラーメッセージ: " + error.message);
+        console.error('ネットワークエラー:', error.message);
     }
 }
 
+testFetch();
+ 
+        
         window.onload = loadSurvey;
     </script>
 </head>

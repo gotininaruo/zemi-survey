@@ -1,111 +1,33 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>時給アンケート</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .question {
-            margin-bottom: 15px;
-        }
-    </style>
-    <script>
-        const results = [];
-
-        function getRandomX() {
-            const values = [1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600];
-            return values[Math.floor(Math.random() * values.length)];
-        }
-
-        function getRandomY() {
-            const values = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-            return values[Math.floor(Math.random() * values.length)];
-        }
-
-        function loadSurvey() {
-            const surveyContainer = document.getElementById('surveyContainer');
-            surveyContainer.innerHTML = '';
-            results.length = 0;
-
-            for (let i = 0; i < 4; i++) {
-                const xValue = getRandomX();
-                results.push({ x: xValue, y: null, answer: null });
-
-                const question = document.createElement('div');
-                question.classList.add('question');
-                question.innerHTML = `
-                    <p>時給${xValue}円の場合、働きたいですか？</p>
-                    <label>
-                        <input type="radio" name="answer${i}" value="はい" onchange="saveAnswer(${i}, '${xValue}', null)"> はい
-                    </label>
-                    <label>
-                        <input type="radio" name="answer${i}" value="いいえ" onchange="saveAnswer(${i}, '${xValue}', null)"> いいえ
-                    </label>
-                `;
-                surveyContainer.appendChild(question);
-            }
-
-            for (let i = 4; i < 10; i++) {
-                const xValue = getRandomX();
-                const yValue = getRandomY();
-
-                results.push({ x: xValue, y: yValue, answer: null });
-
-                const question = document.createElement('div');
-                question.classList.add('question');
-                question.innerHTML = `
-                    <p>時給${xValue}円でシフトに入れる確率が${yValue}%の場合に働きたいですか？</p>
-                    <label>
-                        <input type="radio" name="answer${i}" value="はい" onchange="saveAnswer(${i}, '${xValue}', '${yValue}')"> はい
-                    </label>
-                    <label>
-                        <input type="radio" name="answer${i}" value="いいえ" onchange="saveAnswer(${i}, '${xValue}', '${yValue}')"> いいえ
-                    </label>
-                `;
-                surveyContainer.appendChild(question);
-            }
-        }
-
-        function saveAnswer(index, xValue, yValue) {
-            const answer = document.querySelector(`input[name="answer${index}"]:checked`);
-            if (answer) {
-                results[index].answer = answer.value;
-            }
-        }
-
-    async function testFetch() {
-    try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbxj7bhAsk-b-rnGegM8dVX8rNvszhY8bWVh5PWTtpnExZieLauKMcP3nqHfadN6htn9/exec', {  // ここにウェブアプリURLを貼り付け
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ test: "data" })
-        });
-        
-        if (response.ok) {
-            console.log('接続成功:', await response.json());
-        } else {
-            console.error('接続失敗:', await response.text());
-        }
-    } catch (error) {
-        console.error('ネットワークエラー:', error.message);
-    }
-}
-
-testFetch();
-
-
-        window.onload = loadSurvey;
-    </script>
+  <meta charset="UTF-8">
+  <title>ランダムフォームリンク</title>
 </head>
 <body>
-    <h1>時給アンケート</h1>
-    <p>希望したシフト回数が10回の場合で、シフトに入れる確率が50%の時は、シフトに5回入れるということを意味します。</p>
-    <div id="surveyContainer"></div>
-    <button onclick="submitSurvey()">送信</button>
-    <div id="resultsContainer"></div>
+
+<h2>ランダムにGoogleフォームを開く</h2>
+<button onclick="openRandomForm()">ランダムにフォームを表示</button>
+<p id="formLink"></p>
+
+<script>
+  function openRandomForm() {
+    // フォームのURLリストを配列で定義
+    const formUrls = [
+      "https://docs.google.com/forms/d/1MlG9xCWfHgUlmFK4kBp9wxZp5UeU31mJ0cw2A3wEC2s/edit",
+      "https://docs.google.com/forms/d/1lmyP9_YtP4MLyMUfY3njT2e_F6GKhoRCxIeJfzcKcp8/edit",
+      "https://docs.google.com/forms/d/1OE_-XKBDigDHx1-S8QcYrwLRzTg2sJamFPiytNPFQqo/edit",
+      "https://docs.google.com/forms/d/1sqBz04MHjYx8REfhY_bYALtUStbm3dbe-r9NdhmEfVk/edit"
+    ];
+
+    // ランダムにインデックスを選択
+    const randomIndex = Math.floor(Math.random() * formUrls.length);
+    const randomFormUrl = formUrls[randomIndex];
+
+    // 選ばれたURLをリンクとして表示
+    document.getElementById("formLink").innerHTML = `<a href="${randomFormUrl}" target="_blank">選ばれたフォームを開く</a>`;
+  }
+</script>
+
 </body>
 </html>

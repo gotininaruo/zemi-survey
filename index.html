@@ -2,7 +2,37 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ランダムフォームリンク</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 20px; /* ボタンの文字サイズを大きく */
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    a {
+      display: block;
+      margin-top: 20px;
+      color: #007BFF;
+      font-size: 24px; /* リンクの文字サイズを大きく */
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
 
@@ -12,7 +42,6 @@
 
 <script>
   function openRandomForm() {
-    // フォームのURLリストを配列で定義
     const formUrls = [
       "https://forms.gle/3YPKZtQkpjEnDW3r7",
       "https://forms.gle/RMzJQDYFuAD5Sbu36",
@@ -28,12 +57,8 @@
       "https://forms.gle/dBo6WooTSHMZkJUWA",
       "https://forms.gle/LJDiyVEbCrLjSfz29"
     ];
-
-    // ランダムにインデックスを選択
     const randomIndex = Math.floor(Math.random() * formUrls.length);
     const randomFormUrl = formUrls[randomIndex];
-
-    // 選ばれたURLをリンクとして表示
     document.getElementById("formLink").innerHTML = `<a href="${randomFormUrl}" target="_blank">こちらのフォームを開く</a>`;
   }
 </script>

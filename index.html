@@ -36,30 +36,21 @@
 </head>
 <body>
 
-<h2>以下のボタンを押すと、URLが生成されます</h2>
-<button onclick="openRandomForm()">アンケートに進む</button>
+<h2></h2>下のボタンを押すと、フォームが生成されます</h2>
+<button onclick="openRandomForm()">フォームを生成する</button>
 <p id="formLink"></p>
 
 <script>
   function openRandomForm() {
     const formUrls = [
-      "https://forms.gle/3YPKZtQkpjEnDW3r7",
-      "https://forms.gle/RMzJQDYFuAD5Sbu36",
-      "https://forms.gle/SyfGdsCmvDk7j4Dx7",
-      "https://forms.gle/sw8RojoJP4WFxBbp9",
-      "https://forms.gle/QUdkk72PphR4JHxn8",
-      "https://forms.gle/hFwLo8TyrwAYm3Rz8",
-      "https://forms.gle/WvKFqDACbP2pvGQT9",
-      "https://forms.gle/aBJZHvFnH11DT7Ad9",
-      "https://forms.gle/6Ffi59jAKLGrGGBF9",
-      "https://forms.gle/GHBTFyrthBmki3cz5",
-      "https://forms.gle/Cw7aGBQGi25Aq8QM8",
-      "https://forms.gle/dBo6WooTSHMZkJUWA",
-      "https://forms.gle/LJDiyVEbCrLjSfz29"
+      "https://forms.gle/3mWSfobMMEtoFA7bA",
+      "https://forms.gle/B2PGLsGLxF9wTh6P8",
+      "https://forms.gle/9Wf1KVkQurPee7md9",
+      "https://forms.gle/nhwWFJuHZEuwgHVj9",
     ];
     const randomIndex = Math.floor(Math.random() * formUrls.length);
     const randomFormUrl = formUrls[randomIndex];
-    document.getElementById("formLink").innerHTML = `<a href="${randomFormUrl}" target="_blank">こちらのフォームを開く</a>`;
+    document.getElementById("formLink").innerHTML = `<a href="${randomFormUrl}" target="_blank">フォームを開いてアンケートに進む</a>`;
   }
 </script>
 

@@ -36,20 +36,25 @@
 </head>
 <body>
 
-<h2></h2>下のボタンを押すと、フォームが生成されます</h2>
+<h2>下のボタンを押すと、フォームが生成されます</h2>
 <button onclick="openRandomForm()">フォームを生成する</button>
 <p id="formLink"></p>
 
 <script>
   function openRandomForm() {
+    // フォームのURLリストを配列で定義
     const formUrls = [
-      "https://forms.gle/3mWSfobMMEtoFA7bA",
-      "https://forms.gle/B2PGLsGLxF9wTh6P8",
-      "https://forms.gle/9Wf1KVkQurPee7md9",
-      "https://forms.gle/nhwWFJuHZEuwgHVj9",
+      "https://forms.gle/vCrKt3CX8iLrMWEPA",
+      "https://forms.gle/P7dJPSJ8CjgGgRzy7",
+      "https://forms.gle/zNWRtqJN5aLsvdKn7",
+      "https://forms.gle/341MhMWASemY4Lst9"
     ];
+
+    // ランダムにインデックスを選択
     const randomIndex = Math.floor(Math.random() * formUrls.length);
     const randomFormUrl = formUrls[randomIndex];
+
+    // 選ばれたURLをリンクとして表示
     document.getElementById("formLink").innerHTML = `<a href="${randomFormUrl}" target="_blank">フォームを開いてアンケートに進む</a>`;
   }
 </script>

@@ -10,6 +10,17 @@
       text-align: center;
       padding: 20px;
     }
+    h2 {
+      font-size: 28px; /* タイトルの文字サイズ */
+    }
+    p.description {
+      font-size: 16px; /* 説明文の文字サイズ */
+      color: #555; /* 薄いグレーで目立ちすぎない色 */
+      line-height: 1.6; /* 行間を調整して読みやすく */
+      margin: 20px auto; /* 上下に余白を追加 */
+      max-width: 600px; /* 説明文の幅を制限 */
+      text-align: left; /* 説明文を左寄せに */
+    }
     button {
       background-color: #4CAF50;
       color: white;
@@ -17,7 +28,7 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      font-size: 20px; /* ボタンの文字サイズを大きく */
+      font-size: 20px;
     }
     button:hover {
       background-color: #45a049;
@@ -26,7 +37,7 @@
       display: block;
       margin-top: 20px;
       color: #007BFF;
-      font-size: 24px; /* リンクの文字サイズを大きく */
+      font-size: 24px;
       text-decoration: none;
     }
     a:hover {
@@ -37,8 +48,11 @@
 <body>
 
 <h2>学生のアルバイト選択に関する研究</h2>
-<h3>神戸大学経営学部三回生の沖本です。このアンケートは学生のアルバイト選択に関するアンケートです。選択肢形式のもので、所要時間は1~2分です。ご回答いただいた内容に関しては、ゼミの研究のデータとして使用させていただく予定です。
-以下のボタンを押すと、個別に生成されるアンケート回答フォームが生成されます。表示されたリンクを押して回答に進んでください。<h3>
+<p class="description">
+  神戸大学経営学部三回生の沖本です。このアンケートはアルバイトの選好に関するアンケートです。選択肢形式のもので、所要時間は1~2分です。
+  ご回答いただいた内容に関しては、ゼミの研究のデータとして使用させていただく予定です。<br>
+  以下のボタンを押すと、個別に生成されるアンケート回答フォームが生成されます。表示されたリンクを押して回答に進んでください。よろしくお願いいたします。
+</p>
 <button onclick="openRandomForm()">フォームを生成する</button>
 <p id="formLink"></p>
 
